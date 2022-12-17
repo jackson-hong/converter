@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ConverterWebController {
 
     @GetMapping("/form")
-    public String getForm(){
+    public String getForm() {
         return "form";
     }
 }

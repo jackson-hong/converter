@@ -5,6 +5,7 @@ import com.jackson.converter.controller.base.ErrorResponse;
 import com.jackson.converter.controller.base.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +26,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response<ErrorResponse>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("MethodArgumentNotValidException : {}", e.getMessage());
+        List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
+        String message = getMessage(allErrors.iterator());
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .body(Response.badRequestError(new ErrorResponse(message)));
+    }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<Response<ErrorResponse>> bindException(BindException e) {
+        log.error("BindException : {}", e.getMessage());
         List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
         String message = getMessage(allErrors.iterator());
         return ResponseEntity

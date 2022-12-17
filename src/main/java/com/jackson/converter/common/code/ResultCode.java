@@ -11,8 +11,6 @@ public enum ResultCode {
 
     // CLIENT
     RESULT_4000("4000", "잘못 된 요청입니다.", HttpStatus.BAD_REQUEST),
-    RESULT_4003("4001", "회원이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED),
-    RESULT_4004("4004", "데이터가 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
 
     // SERVER
     RESULT_5000("5000", "internal server error", HttpStatus.INTERNAL_SERVER_ERROR);;
