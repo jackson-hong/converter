@@ -1,53 +1,37 @@
 package com.jackson.converter.domain;
 
+import com.jackson.converter.controller.ConvertResponse;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
-
-import java.util.PriorityQueue;
 
 @EqualsAndHashCode
 public class Converter {
 
     private final String initialText;
-    private String engText;
-    private String numberText;
+    private String result;
 
     @Builder
-    public Converter(String initialText, String engText, String numberText) {
+    public Converter(String initialText, String result) {
         this.initialText = initialText;
-        this.engText = engText;
-        this.numberText = numberText;
+        this.result = result;
     }
 
     public Converter(String initialText) {
         this.initialText = initialText;
     }
 
-    public void divide(){
-        PriorityQueue<Alphabet> engQueue = new PriorityQueue<>();
-        PriorityQueue<Integer> numberQueue = new PriorityQueue<>();
-        for(int i = 0; i < initialText.length(); i++) {
-            char character = initialText.charAt(i);
-            if(isAlphabet(character)){
-                engQueue.add(new Alphabet(character));
-            }
-            if(Character.isDigit(character)){
-                numberQueue.add(Character.getNumericValue(character));
-            }
-        }
-        StringBuilder engBuilder = new StringBuilder();
-        StringBuilder numberBuilder = new StringBuilder();
-        while (!numberQueue.isEmpty()) {
-            numberBuilder.append(numberQueue.poll());
-        }
-        while (!engQueue.isEmpty()) {
-            engBuilder.append(engQueue.poll().toChar());
-        }
-        engText = engBuilder.toString();
-        numberText = numberBuilder.toString();
+    public String convert(){
+        TextQueues textQueues = new TextQueues();
+        textQueues.divide(initialText);
+        result = textQueues.merge();
+        return result;
     }
 
-    private boolean isAlphabet(char character){
-        return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z');
+    public ConvertResponse toResponse(int unit){
+        int length = result.length();
+        int lengthRemainder = length % unit;
+        String remainder = result.substring(length - lengthRemainder, length);
+        String quotient = result.substring(0, length - lengthRemainder);
+        return new ConvertResponse(quotient, remainder);
     }
 }

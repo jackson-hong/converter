@@ -1,15 +1,124 @@
 <html lang="ko"
+
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<HEAD>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</HEAD>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style>
+    #home {
+        border: 1px red solid;
+        margin: 1em;
+        padding-left: 1em;
+        width: 30em;
+        display: flex;
+        flex-direction: column;
+    }
 
-<th:block layout:fragment="head"></th:block>
+    div {
+        /*border: 1px red solid;*/
+    }
 
-<div>
-    <div layout:fragment="header"></div>
+    .inner {
+        height: 3em;
+        display: flex;
+        flex-direction: row;
+    }
 
-    jackson
-    <div layout:fragment="content"></div>
+    #quotient-val {
+        white-space: normal;
+        word-break: break-all;
+    }
 
-    <div layout:fragment="footer"></div>
+    #remainder-val {
+        white-space: normal;
+        word-break: break-all;
+    }
+
+    #button-sec {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
+    #send-button {
+        width: 5em;
+    }
+</style>
+
+<div id="home">
+    <div class="inner" id="url-sec">
+        <div id="url-desc">
+            URL : http://
+        </div>
+        <div id="url-input-sec">
+            <input type="text" id="url-input">
+        </div>
+    </div>
+    <div class="inner" id="type-sec">
+        <div id="type-desc">
+            Type :
+        </div>
+        <div id="type-input">
+            <select name="textType" id="type-select">
+                <option value="WHOLE">전체 텍스트</option>
+                <option value="NO_HTML">HTML 태그 제거</option>
+            </select>
+        </div>
+    </div>
+    <div class="inner" id="unit-sec">
+        <div id="unit-desc">
+            출력 묶음 단위 :
+        </div>
+        <div id="unit-input-sec">
+            <input type="text" id="unit-input">
+        </div>
+    </div>
+    <div class="inner" id="button-sec">
+        <button id="send-button" onclick="send()">출력</button>
+    </div>
+    <div id="quotient-sec">
+        <div id="quotient-desc">
+            몫 :
+        </div>
+        <div id="quotient-val">
+            A0A0A0A0A0A0A0A0A0A0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0B0B0B0B0B0B0B0B0B0C0C0C0C0C0c0c0c0D0D0D0D0d0d0d0d0d0d1E1E1E1E1E1E1E1E1E1E1E1E1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1F1F1F1F1G1G1g1g1g1g1g1g1g1g1H1H1H1h1h1h1I1I1I1I1I1I1i1i1i1i1i1i1i1i1i1i1i1i2i2i2i2i2i2i2J2J2J2J2K2K2k2k2L2L2L2L2L2L2l2l2l2l2M2M2M2M2M2M2M2m2m2m2m2m2m2m2m2m2N2N2N2N2N2N2N2N3N3N3N3N3n3n3n3n3n3n3n3n3n3n3n3n3n3n3n3n3O3O3O3O3O3O3O3O3O4O4O4O4O4O4O4O4O4O4o4o4o4o4o4o4o4o4o4o4o4o4o4o4o4o4o4o4P4P4P4P4P4P4P5P5P5P5P5P5P5P5P5P5P5P5P5p5p5p5p5p5p5Q5q5R5R5R5R5R5R5R5r5r5r5r5r5r5r6r6r6r6r6r6r6r6r6r6S6S6S6S6S6S6S6S6s6s6s6s6s6s6s6s6s6s6s6s6s6T6T6T7T7T7T7T7T7T7T7T7T7T7T7T7T7t7t7t7t7t7t7t7t7t7t7t7t7t8t8t8t8t8t8t8t8t8t8t8U8U8U8u8u8u8u8u8V8V8V8V9V9V9V9V9V9v9v9v9w9w9w9X9X9X9x9x9x9x9x9x9Y9Y9Y9
+        </div>
+    </div>
+    <div id="remainder-sec">
+        <div id="remainder-desc">
+            나머지:
+        </div>
+        <div id="remainder-val">
+            A0A0A0A0A0A0A0A0A0A0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0B0B0B0B0B0B0B0B0B0C0C0C0C0C0c0c0c0D0D0D0D0d0d0d0d0d0d1E1E1E1E1E1E1E1E1E1E1E1E1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1F1F1F1F1G1G1g1g1g1g1g1g1g1g1H1H1H1h1h1h1I1I1I1I1I1I1i1i1i1i1i1i1i1i1i1i1i1i2i2i2i2i2i2i2J2J2J2J2K2K2k2k2L2L2L2L2L2L2l2l2l2l2M2M2M2M2M2M2M2m2m2m2m2m2m2m2m2m2N2N2N2N2N2N2N2N3N3N3N3N3n3n3n3n3n3n3n3n3n3n3n3n3n3n3n3n3O3O3O3O3O3O3O3O3O4O4O4O4O4O4O4O4O4O4o4o4o4o4o4o4o4o4o4o4o4o4o4o4o4o4o4o4P4P4P4P4P4P4P5P5P5P5P5P5P5P5P5P5P5P5P5p5p5p5p5p5p5Q5q5R5R5R5R5R5R5R5r5r5r5r5r5r5r6r6r6r6r6r6r6r6r6r6S6S6S6S6S6S6S6S6s6s6s6s6s6s6s6s6s6s6s6s6s6T6T6T7T7T7T7T7T7T7T7T7T7T7T7T7T7t7t7t7t7t7t7t7t7t7t7t7t7t8t8t8t8t8t8t8t8t8t8t8U8U8U8u8u8u8u8u8V8V8V8V9V9V9V9V9V9v9v9v9w9w9w9X9X9X9x9x9x9x9x9x9Y9Y9Y9
+        </div>
+    </div>
 </div>
+<script>
+    function send(){
+        const url = document.getElementById('url-input').value;
+        const textType = document.getElementById('type-select').value;
+        const unit = document.getElementById('unit-input').value;
+        let request = new Object();
+        request.url = 'http://' + url;
+        request.textType = textType;
+        request.unit = unit;
+        let host = 'http://localhost:8080/converter';
+        let requestUri = commonMakeUrl(host, request);
+        axios.get(requestUri)
+            .then(response => {
+                document.getElementById('quotient-val').innerText = response.data.resultData.quotient;
+                document.getElementById('remainder-val').innerText = response.data.resultData.remainder;
+
+        });
+    }
+
+    function commonMakeUrl(url, param) {
+        Object.keys(param).forEach(function(key, index) {
+            url = url + (index === 0 ? "?" : "&") + key + "=" + param[key];
+        })
+        return url;
+    }
+</script>
 </html>

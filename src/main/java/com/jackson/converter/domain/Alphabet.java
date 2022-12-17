@@ -1,5 +1,8 @@
 package com.jackson.converter.domain;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 public class Alphabet implements Comparable<Alphabet>{
     private final Character character;
 

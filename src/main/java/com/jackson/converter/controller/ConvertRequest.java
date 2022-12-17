@@ -14,5 +14,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ConvertRequest {
     private String url;
     private TextType textType;
-    private Long unit;
+    private Integer unit;
 }
